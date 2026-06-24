@@ -26,7 +26,7 @@
 
 ### 1. Get API Credentials
 
-Log in to your [PCBWay Partner Dashboard](https://www.pcbway.com) to obtain your **API Key**.
+Contact PCBWay partner support to request an **API Key** for your account.
 
 ### 2. Install
 
