@@ -1,5 +1,9 @@
 # pcbway-mcp-server
 
+[![CI](https://github.com/nabheet/pcbway-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/nabheet/pcbway-mcp-server/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/pcbway-mcp-server)](https://www.npmjs.com/package/pcbway-mcp-server)
+[![License](https://img.shields.io/github/license/nabheet/pcbway-mcp-server)](LICENSE)
+
 **MCP server for the PCBWay Partner API.** Full coverage of the PCBWay API — PCB/SMT quotes, order lifecycle (place, confirm, cancel, status), shipping, account, and address lookup — from any MCP-compatible client (Claude Desktop, etc.).
 
 ## Features
