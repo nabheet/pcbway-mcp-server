@@ -35,5 +35,9 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run build
-      - run: npm version patch --no-git-tag-version
-      - run: npm publish --access public
+      - run: |
+          for i in $(seq 1 5); do
+            npm version patch --no-git-tag-version
+            npm publish --access public && break
+            echo "Publish failed, bumping and retrying ($i/5)..."
+          done
