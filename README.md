@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/pcbway-mcp-server)](https://www.npmjs.com/package/pcbway-mcp-server)
 [![License](https://img.shields.io/github/license/nabheet/pcbway-mcp-server)](LICENSE)
 
-**MCP server for the PCBWay Partner API.** Full coverage of the PCBWay API — PCB/SMT quotes, order lifecycle (place, confirm, cancel, status), shipping, account, and address lookup — from any MCP-compatible client (Claude Desktop, etc.).
+**Get instant PCB manufacturing and assembly quotes, place orders, and track fabrication — all from your AI coding assistant.** This MCP server gives you full access to the PCBWay Partner API: PCB pricing, SMT assembly quotes, order lifecycle (place, confirm, cancel, track), shipping costs, and account balance — compatible with Claude Desktop, opencode, Cursor, and any MCP client.
 
 ## Features
 

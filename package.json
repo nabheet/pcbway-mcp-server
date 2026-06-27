@@ -1,7 +1,7 @@
 {
   "name": "pcbway-mcp-server",
   "version": "0.1.1",
-  "description": "MCP server for PCBWay Partner API — PCB quotes, assembly quotes, order tracking, and shipping info",
+  "description": "PCBWay MCP server — get PCB manufacturing quotes, SMT assembly pricing, place and track orders, and check shipping costs from any AI client.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -28,7 +28,12 @@
     "pcba",
     "manufacturing",
     "electronics",
-    "hardware"
+    "hardware",
+    "pcb assembly",
+    "pcb manufacturing",
+    "electronics manufacturing",
+    "prototyping",
+    "supply chain"
   ],
   "license": "MIT",
   "repository": {
