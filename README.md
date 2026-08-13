@@ -328,8 +328,11 @@ Releases are published automatically by CI — no manual npm publish needed.
 | Trigger | Channel | Version | Tag | GitHub Release |
 | --- | --- | --- | --- | --- |
 | Merge to `main` | `latest` | next patch (registry-derived) | `vX.Y.Z` | ✅ (auto notes) |
+| Every PR push | `beta` | `<version>-beta.<run_number>` | — | — |
 | Push `v*-beta*` tag | `beta` | from `package.json` | the tag | ✅ (prerelease) |
 | Manual `workflow_dispatch` on CI | `beta` | next `-beta.N` after last published beta | — | — |
+
+- Every PR push publishes `<version>-beta.<run_number>` to the `beta` dist-tag (`npm i pcbway-mcp-server@beta`), so every PR is instantly installable — same-repo, non-draft, non-dependabot PRs; re-runs deduped.
 
 - Stable version = last published `latest` + patch, so repeated merges never collide.
 - An intentional minor/major bump in `package.json` is published as-is (honored).
