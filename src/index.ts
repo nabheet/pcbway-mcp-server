@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'node:fs';
+
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -120,6 +122,19 @@ SETUP
 }
 
 // ── Tool definitions ───────────────────────────────────────────────
+
+// Read the package version at runtime so MCP initialization reports the
+// version actually published with the package instead of a stale constant.
+const VERSION = ((): string => {
+  try {
+    const pkg = JSON.parse(
+      readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+    ) as { version?: string };
+    return pkg.version ?? '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+})();
 
 const tools: Tool[] = [
   {
@@ -405,7 +420,7 @@ async function main(): Promise<void> {
   const server = new Server(
     {
       name: 'pcbway-mcp-server',
-      version: '0.1.1',
+      version: VERSION,
     },
     {
       capabilities: {
