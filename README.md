@@ -321,6 +321,24 @@ One class per resource. Input validation via Zod schemas. All endpoints use POST
 | `get_states` | `POST /api/Address/GetState` | ✅ |
 | `get_cities` | `POST /api/Address/GetCity` | ✅ |
 
+## Releases
+
+Releases are published automatically by CI — no manual npm publish needed.
+
+| Trigger | Channel | Version | Tag | GitHub Release |
+| --- | --- | --- | --- | --- |
+| Merge to `main` | `latest` | next patch (registry-derived) | `vX.Y.Z` | ✅ (auto notes) |
+| Every PR push | `beta` | `<version>-beta.<run_number>` | — | — |
+| Push `v*-beta*` tag | `beta` | from `package.json` | the tag | ✅ (prerelease) |
+| Manual `workflow_dispatch` on CI | `beta` | next `-beta.N` after last published beta | — | — |
+
+- Every PR push publishes `<version>-beta.<run_number>` to the `beta` dist-tag (`npm i pcbway-mcp-server@beta`), so every PR is instantly installable — same-repo, non-draft, non-dependabot PRs; re-runs deduped.
+
+- Stable version = last published `latest` + patch, so repeated merges never collide.
+- An intentional minor/major bump in `package.json` is published as-is (honored).
+- Publish is retried 3x for transient failures only; a version conflict is never retried.
+- A push to `main` only tags/releases if it actually published (channel check).
+
 ## License
 
 MIT
