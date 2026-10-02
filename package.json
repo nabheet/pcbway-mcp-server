@@ -1,7 +1,7 @@
 {
   "name": "pcbway-mcp-server",
   "version": "0.1.1",
-  "description": "PCBWay MCP server — get PCB manufacturing quotes, SMT assembly pricing, place and track orders, and check shipping costs from any AI client.",
+  "description": "PCBWay MCP server for AI coding assistants — PCBWay API tools for instant PCB manufacturing quotes, SMT assembly pricing, order management, and shipping costs.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -24,7 +24,10 @@
   "keywords": [
     "pcbway",
     "mcp",
-    "model-context-protocol",
+    "model context protocol",
+    "pcbway api",
+    "pcb quote",
+    "smt assembly",
     "pcb",
     "pcba",
     "manufacturing",
@@ -32,7 +35,6 @@
     "hardware",
     "pcb assembly",
     "pcb manufacturing",
-    "electronics manufacturing",
     "prototyping",
     "supply chain"
   ],
