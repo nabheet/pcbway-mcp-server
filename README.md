@@ -6,13 +6,24 @@
 
 **Get instant PCB manufacturing and assembly quotes, place orders, and track fabrication — all from your AI coding assistant.** This MCP server gives you full access to the PCBWay Partner API: PCB pricing, SMT assembly quotes, order lifecycle (place, confirm, cancel, track), shipping costs, and account balance — compatible with Claude Desktop, opencode, Cursor, and any MCP client.
 
+```bash
+npm install -g pcbway-mcp-server     # or run without installing: npx pcbway-mcp-server
+```
+
+## PCBWay API
+
+Wraps the PCBWay Partner API (`api-partner.pcbway.com`) — instant PCB
+manufacturing quotes, SMT assembly pricing, order lifecycle (place, confirm,
+cancel, track), shipping freight, and account balance — exposed as 16 MCP
+tools. See [Available Tools](#available-tools) for the full reference.
+
 ## Features
 
-- **PCB Quote** — Instant PCB manufacturing pricing with turn time options
-- **SMT Quote** — SMT assembly pricing by part counts
-- **Order Lifecycle** — Place, confirm, cancel orders; query fabrication status & details
+- **PCB quote API** — instant PCB manufacturing pricing with turn time options
+- **SMT assembly API** — pricing by part counts
+- **Order management** — place, confirm, cancel orders; query fabrication status & details
 - **Order Package Management** — Check, pay, and cancel awaiting-payment packages; inspect confirmed packages
-- **Shipping** — Pre-payment freight cost estimate
+- **Shipping costs** — pre-payment freight estimate
 - **Account** — Balance, coupon value, reward points
 - **Address Lookup** — Countries, states/provinces, cities with postal codes
 - **16 MCP tools** covering all documented PCBWay Partner API endpoints
