@@ -338,7 +338,7 @@ Releases are published automatically by CI — no manual npm publish needed.
 
 | Trigger | Channel | Version | Tag | GitHub Release |
 | --- | --- | --- | --- | --- |
-| Merge to `main` | `latest` | next patch (registry-derived) | `vX.Y.Z` | ✅ (auto notes) |
+| Merge to `main` (shipping changes only) | `latest` | next patch (registry-derived) | `vX.Y.Z` | ✅ (auto notes) |
 | Every PR push | `beta` | `<version>-beta.<run_number>` | — | — |
 | Push `v*-beta*` tag | `beta` | from `package.json` | the tag | ✅ (prerelease) |
 | Manual `workflow_dispatch` on CI | `beta` | next `-beta.N` after last published beta | — | — |
@@ -349,6 +349,8 @@ Releases are published automatically by CI — no manual npm publish needed.
 - An intentional minor/major bump in `package.json` is published as-is (honored).
 - Publish is retried 3x for transient failures only; a version conflict is never retried.
 - A push to `main` only tags/releases if it actually published (channel check).
+- A push to `main` only publishes when it changed something the package ships. `package-lock.json`, `.github/**`, and a `package.json` whose only diffs are the version and/or the inert devDependencies (`@types/node`, `vitest`, `@vitest/coverage-v8`) are non-shipping and cut no release. `typescript` is deliberately not inert — it compiles `dist/`.
+- The guard diffs from the newest stable `v*` tag, not from the previous commit, so a shipping change whose publish failed is retried by the next run instead of waiting for the next shipping merge.
 
 ## License
 
