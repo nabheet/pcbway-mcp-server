@@ -103,6 +103,10 @@ publisher per package; the filename must stay `ci.yml`):
   hold unmerged branch code.
 - `workflow_dispatch` → staging beta build from `main`.
 
-The version is derived from the npm registry (`latest` + patch), not from
-`package.json`, so repeated merges cannot collide; an intentional minor/major
-bump in `package.json` is honored.
+The version comes from `max(newest stable vX.Y.Z tag, registry latest)` plus a
+patch, not from `package.json`, so repeated merges cannot collide. Two sources
+because each covers the other's failure: the registry's CDN read lags a fresh
+publish, and a publish can succeed while its tag push fails. An intentional
+minor/major bump in `package.json` is honored. A version conflict on `latest`
+bumps a patch and republishes (bounded at two bumps) instead of failing; beta
+channels fail fast, because their versions are already unique per run.
