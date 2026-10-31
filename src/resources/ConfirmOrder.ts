@@ -1,24 +1,36 @@
-import { z } from 'zod';
-import type { PcbWayClient } from '../client.js';
-import type { ConfirmOrderRequest, ConfirmOrderResponse } from '../types.js';
-import { PAY_TYPES } from '../enums.js';
+import { z } from "zod";
+import type { PcbWayClient } from "../client.js";
+import { PAY_TYPES } from "../enums.js";
+import type { ConfirmOrderRequest, ConfirmOrderResponse } from "../types.js";
 
 export const ConfirmOrderInputSchema = z.object({
-  OrderNo: z.string().min(1).describe('Order number(s) — comma-separated for multiple (e.g. "W00001AS1" or "W00001AS1,W00001AS2")'),
-  PayType: z.number().int().describe('Payment method (1=AccountPay, 2=PCBWayWebPay)'),
-  AddGroupNo: z.string().optional().describe('Order package number (when adding to existing package)'),
-  ShipType: z.number().int().optional().describe('Logistics company (required unless adding to package)'),
-  Country: z.string().optional().describe('Country name (required unless adding to package)'),
-  CountryCode: z.string().optional().describe('Country code (required unless adding to package)'),
-  State: z.string().optional().describe('State/Province/Region'),
-  Postalcode: z.string().optional().describe('Postal code'),
-  City: z.string().optional().describe('City (required unless adding to package)'),
-  Addr: z.string().optional().describe('Delivery address (required unless adding to package)'),
-  CompanyName: z.string().optional().describe('Company name'),
-  ContactName: z.string().optional().describe('Contact person'),
-  Tel: z.string().optional().describe('Phone number (required unless adding to package)'),
-  BuyerEmail: z.string().optional().describe('Buyer email for contact'),
-  Tax: z.string().optional().describe('Tax ID'),
+  OrderNo: z
+    .string()
+    .min(1)
+    .describe(
+      'Order number(s) — comma-separated for multiple (e.g. "W00001AS1" or "W00001AS1,W00001AS2")',
+    ),
+  PayType: z.number().int().describe("Payment method (1=AccountPay, 2=PCBWayWebPay)"),
+  AddGroupNo: z
+    .string()
+    .optional()
+    .describe("Order package number (when adding to existing package)"),
+  ShipType: z
+    .number()
+    .int()
+    .optional()
+    .describe("Logistics company (required unless adding to package)"),
+  Country: z.string().optional().describe("Country name (required unless adding to package)"),
+  CountryCode: z.string().optional().describe("Country code (required unless adding to package)"),
+  State: z.string().optional().describe("State/Province/Region"),
+  Postalcode: z.string().optional().describe("Postal code"),
+  City: z.string().optional().describe("City (required unless adding to package)"),
+  Addr: z.string().optional().describe("Delivery address (required unless adding to package)"),
+  CompanyName: z.string().optional().describe("Company name"),
+  ContactName: z.string().optional().describe("Contact person"),
+  Tel: z.string().optional().describe("Phone number (required unless adding to package)"),
+  BuyerEmail: z.string().optional().describe("Buyer email for contact"),
+  Tax: z.string().optional().describe("Tax ID"),
 });
 
 export type ConfirmOrderInput = z.infer<typeof ConfirmOrderInputSchema>;
@@ -48,7 +60,7 @@ export class ConfirmOrder {
     };
 
     const res = await this.client.request<ConfirmOrderResponse>(
-      '/api/Pcb/ConfirmOrder',
+      "/api/Pcb/ConfirmOrder",
       body as unknown as Record<string, unknown>,
     );
 
@@ -56,7 +68,7 @@ export class ConfirmOrder {
       Object.entries(PAY_TYPES).find(([, v]) => v === res.PayType)?.[0] ?? `Type ${res.PayType}`;
 
     const lines: string[] = [
-      '## Confirm Order / Payment\n',
+      "## Confirm Order / Payment\n",
       `**Total Amount:** $${res.TotalAmount.toFixed(2)}`,
       `**Account Balance:** $${res.AccountBalance.toFixed(2)}`,
       `**Payment Method:** ${payTypeName}`,
@@ -75,6 +87,6 @@ export class ConfirmOrder {
       lines.push(`**Payment URL:** ${res.PCBWayPayUrl}`);
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 }

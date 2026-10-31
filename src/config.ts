@@ -4,7 +4,7 @@
  *
  * Loads .env file automatically via dotenv (if present).
  */
-import 'dotenv/config';
+import "dotenv/config";
 
 export interface Config {
   apiKey: string;
@@ -23,16 +23,14 @@ export interface Config {
  */
 export function loadConfig(): Config {
   const apiKey = process.env.PCBWAY_API_KEY;
-  const baseUrl =
-    process.env.PCBWAY_BASE_URL ?? 'https://api-partner.pcbway.com';
-  const maxRetries = parseInt(process.env.PCBWAY_MAX_RETRIES ?? '', 10) || 3;
-  const baseDelayMs = parseInt(process.env.PCBWAY_BASE_DELAY_MS ?? '', 10) || 500;
-  const timeoutMs = parseInt(process.env.PCBWAY_TIMEOUT_MS ?? '', 10) || 30_000;
+  const baseUrl = process.env.PCBWAY_BASE_URL ?? "https://api-partner.pcbway.com";
+  const maxRetries = parseInt(process.env.PCBWAY_MAX_RETRIES ?? "", 10) || 3;
+  const baseDelayMs = parseInt(process.env.PCBWAY_BASE_DELAY_MS ?? "", 10) || 500;
+  const timeoutMs = parseInt(process.env.PCBWAY_TIMEOUT_MS ?? "", 10) || 30_000;
 
   if (!apiKey) {
     throw new Error(
-      'Missing PCBWAY_API_KEY environment variable. ' +
-        'Set it to your PCBWay Partner API Key.',
+      "Missing PCBWAY_API_KEY environment variable. " + "Set it to your PCBWay Partner API Key.",
     );
   }
 

@@ -1,17 +1,17 @@
-import { z } from 'zod';
-import type { PcbWayClient } from '../client.js';
-import type { GetFreightByOrderRequest, GetFreightByOrderResponse } from '../types.js';
-import { SHIP_TYPES } from '../enums.js';
+import { z } from "zod";
+import type { PcbWayClient } from "../client.js";
+import { SHIP_TYPES } from "../enums.js";
+import type { GetFreightByOrderRequest, GetFreightByOrderResponse } from "../types.js";
 
 export const ShippingInputSchema = z.object({
-  OrderNo: z.string().min(1).describe('PCBWay order number (or comma-separated for multiple)'),
-  ShipType: z.number().int().describe('Logistics company (1=DHL, 10=FedEx IP, 4=SF Express, etc.)'),
-  Country: z.string().describe('Country name'),
+  OrderNo: z.string().min(1).describe("PCBWay order number (or comma-separated for multiple)"),
+  ShipType: z.number().int().describe("Logistics company (1=DHL, 10=FedEx IP, 4=SF Express, etc.)"),
+  Country: z.string().describe("Country name"),
   CountryCode: z.string().describe('Country code (e.g. "US")'),
-  Postalcode: z.string().describe('Postal code'),
-  City: z.string().describe('City'),
-  State: z.string().optional().describe('State/Province/Region'),
-  AddGroupNo: z.string().optional().describe('Order package number (when adding to package)'),
+  Postalcode: z.string().describe("Postal code"),
+  City: z.string().describe("City"),
+  State: z.string().optional().describe("State/Province/Region"),
+  AddGroupNo: z.string().optional().describe("Order package number (when adding to package)"),
 });
 
 export type ShippingInput = z.infer<typeof ShippingInputSchema>;
@@ -34,7 +34,7 @@ export class Shipping {
     };
 
     const res = await this.client.request<GetFreightByOrderResponse>(
-      '/api/Pcb/GetFreightByOrder',
+      "/api/Pcb/GetFreightByOrder",
       body as unknown as Record<string, unknown>,
     );
 
@@ -52,9 +52,9 @@ export class Shipping {
     ];
 
     if (res.IsRas) {
-      lines.push('\n⚠️ **DHL Remote Area Surcharge** may apply to this address.');
+      lines.push("\n⚠️ **DHL Remote Area Surcharge** may apply to this address.");
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 }

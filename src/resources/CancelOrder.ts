@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import type { PcbWayClient } from '../client.js';
-import type { CancelOrderRequest, CancelOrderResponse } from '../types.js';
+import { z } from "zod";
+import type { PcbWayClient } from "../client.js";
+import type { CancelOrderRequest, CancelOrderResponse } from "../types.js";
 
 export const CancelOrderInputSchema = z.object({
   OrderNo: z.string().min(1).describe('PCBWay order number to cancel (e.g. "W0002AS1")'),
@@ -17,14 +17,14 @@ export class CancelOrder {
     const body: CancelOrderRequest = { OrderNo: params.OrderNo };
 
     const res = await this.client.request<CancelOrderResponse>(
-      '/api/Pcb/CancelOrder',
+      "/api/Pcb/CancelOrder",
       body as unknown as Record<string, unknown>,
     );
 
     return [
-      '## Cancel Order\n',
+      "## Cancel Order\n",
       `**Order:** ${res.OrderNo}`,
-      '**Status:** Cancelled successfully',
-    ].join('\n');
+      "**Status:** Cancelled successfully",
+    ].join("\n");
   }
 }
