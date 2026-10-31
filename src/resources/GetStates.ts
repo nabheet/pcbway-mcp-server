@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import type { PcbWayClient } from '../client.js';
-import type { GetStateRequest, GetStateResponse } from '../types.js';
+import { z } from "zod";
+import type { PcbWayClient } from "../client.js";
+import type { GetStateRequest, GetStateResponse } from "../types.js";
 
 export const GetStatesInputSchema = z.object({
   Country: z.string().min(1).describe('Country name (e.g. "UNITED STATES OF AMERICA")'),
@@ -21,7 +21,7 @@ export class GetStates {
     };
 
     const res = await this.client.request<GetStateResponse>(
-      '/api/Address/GetState',
+      "/api/Address/GetState",
       body as unknown as Record<string, unknown>,
     );
 
@@ -29,14 +29,12 @@ export class GetStates {
       return `No states/provinces found for ${params.Country}`;
     }
 
-    const lines: string[] = [
-      `## States/Provinces — ${params.Country}\n`,
-    ];
+    const lines: string[] = [`## States/Provinces — ${params.Country}\n`];
     for (const s of res.States) {
       lines.push(`- ${s}`);
     }
     lines.push(`\n*${res.States.length} regions total*`);
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 }

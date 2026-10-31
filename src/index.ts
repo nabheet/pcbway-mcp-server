@@ -1,32 +1,32 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'node:fs';
+import { readFileSync } from "node:fs";
 
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   type Tool,
-} from '@modelcontextprotocol/sdk/types.js';
-import { loadConfig } from './config.js';
-import { PcbWayClient } from './client.js';
-import { PcbQuote } from './resources/PcbQuote.js';
-import { SmtQuote } from './resources/SmtQuote.js';
-import { OrderProcess } from './resources/OrderProcess.js';
-import { OrderDetails } from './resources/OrderDetails.js';
-import { Shipping } from './resources/Shipping.js';
-import { Account } from './resources/Account.js';
-import { PlaceOrder } from './resources/PlaceOrder.js';
-import { ConfirmOrder } from './resources/ConfirmOrder.js';
-import { CancelOrder } from './resources/CancelOrder.js';
-import { CheckTGroupOrder } from './resources/CheckTGroupOrder.js';
-import { PayTGroupOrder } from './resources/PayTGroupOrder.js';
-import { CancelTGroupOrder } from './resources/CancelTGroupOrder.js';
-import { CheckGroupOrder } from './resources/CheckGroupOrder.js';
-import { GetCountries } from './resources/GetCountries.js';
-import { GetStates } from './resources/GetStates.js';
-import { GetCities } from './resources/GetCities.js';
+} from "@modelcontextprotocol/sdk/types.js";
+import { PcbWayClient } from "./client.js";
+import { type Config, loadConfig } from "./config.js";
+import { Account } from "./resources/Account.js";
+import { CancelOrder } from "./resources/CancelOrder.js";
+import { CancelTGroupOrder } from "./resources/CancelTGroupOrder.js";
+import { CheckGroupOrder } from "./resources/CheckGroupOrder.js";
+import { CheckTGroupOrder } from "./resources/CheckTGroupOrder.js";
+import { ConfirmOrder } from "./resources/ConfirmOrder.js";
+import { GetCities } from "./resources/GetCities.js";
+import { GetCountries } from "./resources/GetCountries.js";
+import { GetStates } from "./resources/GetStates.js";
+import { OrderDetails } from "./resources/OrderDetails.js";
+import { OrderProcess } from "./resources/OrderProcess.js";
+import { PayTGroupOrder } from "./resources/PayTGroupOrder.js";
+import { PcbQuote } from "./resources/PcbQuote.js";
+import { PlaceOrder } from "./resources/PlaceOrder.js";
+import { Shipping } from "./resources/Shipping.js";
+import { SmtQuote } from "./resources/SmtQuote.js";
 
 // ── Help flag ──────────────────────────────────────────────────────
 
@@ -117,266 +117,333 @@ SETUP
     }
   }
 `;
-  // eslint-disable-next-line no-console
   console.log(help);
 }
-
 // ── Tool definitions ───────────────────────────────────────────────
 
 // Read the package version at runtime so MCP initialization reports the
 // version actually published with the package instead of a stale constant.
 const VERSION = ((): string => {
   try {
-    const pkg = JSON.parse(
-      readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
-    ) as { version?: string };
-    return pkg.version ?? '0.0.0';
+    const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+      version?: string;
+    };
+    return pkg.version ?? "0.0.0";
   } catch {
-    return '0.0.0';
+    return "0.0.0";
   }
 })();
 
 const tools: Tool[] = [
   {
-    name: 'pcb_quote',
-    description: 'Get a PCB manufacturing price quote from PCBWay',
+    name: "pcb_quote",
+    description: "Get a PCB manufacturing price quote from PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        Country: { type: 'string', description: 'Country name (e.g. "UNITED STATES OF AMERICA")' },
-        CountryCode: { type: 'string', description: 'Country code (e.g. "US")' },
-        ShipType: { type: 'number', description: 'Logistics company (1=DHL, 10=FedEx IP, 4=SF Express, etc.)' },
-        Postalcode: { type: 'string', description: 'Postal code' },
-        City: { type: 'string', description: 'City' },
-        Length: { type: 'number', description: 'Board length in mm' },
-        Width: { type: 'number', description: 'Board width in mm' },
-        Qty: { type: 'number', description: 'Quantity (5-10000)' },
-        Layers: { type: 'number', description: 'Number of layers (1,2,4,6,8,10,12,14)' },
-        BoardType: { type: 'string', description: 'Board type: "Single PCB" (default), "Panel PCB as design", "Panel PCB by Supplier"' },
-        Material: { type: 'string', description: 'PCB material: FR-4 (default), Aluminum, Rogers, HDI, Copper' },
-        FR4Tg: { type: 'string', description: 'FR4 Tg grade (default: TG150)' },
-        Thickness: { type: 'number', description: 'Board thickness in mm (default: 1.6)' },
-        MinTrackSpacing: { type: 'string', description: 'Min track/space (default: "6/6mil")' },
-        MinHoleSize: { type: 'number', description: 'Min hole size in mm (default: 0.3)' },
-        SolderMask: { type: 'string', description: 'Solder mask color (default: "Green")' },
-        Silkscreen: { type: 'string', description: 'Silkscreen color (default: "White")' },
-        SurfaceFinish: { type: 'string', description: 'Surface finish (default: "HASL with lead")' },
-        ViaProcess: { type: 'string', description: 'Via process (default: "Tenting vias")' },
-        FinishedCopper: { type: 'string', description: 'Copper weight (default: "1 oz Cu")' },
-        Note: { type: 'string', description: 'Other special requests' },
+        Country: { type: "string", description: 'Country name (e.g. "UNITED STATES OF AMERICA")' },
+        CountryCode: { type: "string", description: 'Country code (e.g. "US")' },
+        ShipType: {
+          type: "number",
+          description: "Logistics company (1=DHL, 10=FedEx IP, 4=SF Express, etc.)",
+        },
+        Postalcode: { type: "string", description: "Postal code" },
+        City: { type: "string", description: "City" },
+        Length: { type: "number", description: "Board length in mm" },
+        Width: { type: "number", description: "Board width in mm" },
+        Qty: { type: "number", description: "Quantity (5-10000)" },
+        Layers: { type: "number", description: "Number of layers (1,2,4,6,8,10,12,14)" },
+        BoardType: {
+          type: "string",
+          description:
+            'Board type: "Single PCB" (default), "Panel PCB as design", "Panel PCB by Supplier"',
+        },
+        Material: {
+          type: "string",
+          description: "PCB material: FR-4 (default), Aluminum, Rogers, HDI, Copper",
+        },
+        FR4Tg: { type: "string", description: "FR4 Tg grade (default: TG150)" },
+        Thickness: { type: "number", description: "Board thickness in mm (default: 1.6)" },
+        MinTrackSpacing: { type: "string", description: 'Min track/space (default: "6/6mil")' },
+        MinHoleSize: { type: "number", description: "Min hole size in mm (default: 0.3)" },
+        SolderMask: { type: "string", description: 'Solder mask color (default: "Green")' },
+        Silkscreen: { type: "string", description: 'Silkscreen color (default: "White")' },
+        SurfaceFinish: {
+          type: "string",
+          description: 'Surface finish (default: "HASL with lead")',
+        },
+        ViaProcess: { type: "string", description: 'Via process (default: "Tenting vias")' },
+        FinishedCopper: { type: "string", description: 'Copper weight (default: "1 oz Cu")' },
+        Note: { type: "string", description: "Other special requests" },
       },
-      required: ['Country', 'CountryCode', 'ShipType', 'Postalcode', 'City', 'Length', 'Width', 'Qty', 'Layers'],
+      required: [
+        "Country",
+        "CountryCode",
+        "ShipType",
+        "Postalcode",
+        "City",
+        "Length",
+        "Width",
+        "Qty",
+        "Layers",
+      ],
     },
   },
   {
-    name: 'smt_quote',
-    description: 'Get an SMT assembly price quote from PCBWay',
+    name: "smt_quote",
+    description: "Get an SMT assembly price quote from PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        Country: { type: 'string', description: 'Country name' },
-        CountryCode: { type: 'string', description: 'Country code (e.g. "US")' },
-        ShipType: { type: 'number', description: 'Logistics company (1=DHL, 10=FedEx IP, etc.)' },
-        Postalcode: { type: 'string', description: 'Postal code' },
-        City: { type: 'string', description: 'City' },
-        FlexibleOption: { type: 'string', enum: ['Turnkey', 'Kitted or Consigned', 'Combo'], description: 'Assembly flexible option' },
-        BoardType: { type: 'string', enum: ['Single pieces', 'Panelized PCBs'], description: 'Board type' },
-        AssemblySide: { type: 'string', enum: ['Top side', 'Bottom side', 'Both sides'], description: 'Assembly side' },
-        Qty: { type: 'number', description: 'Quantity to assemble' },
-        UniqueParts: { type: 'number', description: 'Number of unique parts (default: 0)' },
-        SMTParts: { type: 'number', description: 'Number of SMT parts (default: 0)' },
-        HoleParts: { type: 'number', description: 'Number of through-hole parts (default: 0)' },
+        Country: { type: "string", description: "Country name" },
+        CountryCode: { type: "string", description: 'Country code (e.g. "US")' },
+        ShipType: { type: "number", description: "Logistics company (1=DHL, 10=FedEx IP, etc.)" },
+        Postalcode: { type: "string", description: "Postal code" },
+        City: { type: "string", description: "City" },
+        FlexibleOption: {
+          type: "string",
+          enum: ["Turnkey", "Kitted or Consigned", "Combo"],
+          description: "Assembly flexible option",
+        },
+        BoardType: {
+          type: "string",
+          enum: ["Single pieces", "Panelized PCBs"],
+          description: "Board type",
+        },
+        AssemblySide: {
+          type: "string",
+          enum: ["Top side", "Bottom side", "Both sides"],
+          description: "Assembly side",
+        },
+        Qty: { type: "number", description: "Quantity to assemble" },
+        UniqueParts: { type: "number", description: "Number of unique parts (default: 0)" },
+        SMTParts: { type: "number", description: "Number of SMT parts (default: 0)" },
+        HoleParts: { type: "number", description: "Number of through-hole parts (default: 0)" },
       },
-      required: ['Country', 'CountryCode', 'ShipType', 'Postalcode', 'City', 'FlexibleOption', 'BoardType', 'AssemblySide', 'Qty'],
+      required: [
+        "Country",
+        "CountryCode",
+        "ShipType",
+        "Postalcode",
+        "City",
+        "FlexibleOption",
+        "BoardType",
+        "AssemblySide",
+        "Qty",
+      ],
     },
   },
   {
-    name: 'order_process',
-    description: 'Get fabrication status and completed process steps for a PCBWay order',
+    name: "order_process",
+    description: "Get fabrication status and completed process steps for a PCBWay order",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        OrderNo: { type: 'string', description: 'PCBWay order number (e.g. "W0002AS1")' },
+        OrderNo: { type: "string", description: 'PCBWay order number (e.g. "W0002AS1")' },
       },
-      required: ['OrderNo'],
+      required: ["OrderNo"],
     },
   },
   {
-    name: 'order_details',
-    description: 'Get full order details including all PCB parameters',
+    name: "order_details",
+    description: "Get full order details including all PCB parameters",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        OrderNo: { type: 'string', description: 'PCBWay order number (e.g. "W0002AS1")' },
+        OrderNo: { type: "string", description: 'PCBWay order number (e.g. "W0002AS1")' },
       },
-      required: ['OrderNo'],
+      required: ["OrderNo"],
     },
   },
   {
-    name: 'shipping_freight',
-    description: 'Get shipping cost quote for an order (call before payment)',
+    name: "shipping_freight",
+    description: "Get shipping cost quote for an order (call before payment)",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        OrderNo: { type: 'string', description: 'PCBWay order number (or comma-separated for multiple)' },
-        ShipType: { type: 'number', description: 'Logistics company (1=DHL, 10=FedEx IP, etc.)' },
-        Country: { type: 'string', description: 'Country name' },
-        CountryCode: { type: 'string', description: 'Country code (e.g. "US")' },
-        Postalcode: { type: 'string', description: 'Postal code' },
-        City: { type: 'string', description: 'City' },
-        State: { type: 'string', description: 'State/Province/Region (optional)' },
-        AddGroupNo: { type: 'string', description: 'Order package number when adding to package (optional)' },
+        OrderNo: {
+          type: "string",
+          description: "PCBWay order number (or comma-separated for multiple)",
+        },
+        ShipType: { type: "number", description: "Logistics company (1=DHL, 10=FedEx IP, etc.)" },
+        Country: { type: "string", description: "Country name" },
+        CountryCode: { type: "string", description: 'Country code (e.g. "US")' },
+        Postalcode: { type: "string", description: "Postal code" },
+        City: { type: "string", description: "City" },
+        State: { type: "string", description: "State/Province/Region (optional)" },
+        AddGroupNo: {
+          type: "string",
+          description: "Order package number when adding to package (optional)",
+        },
       },
-      required: ['OrderNo', 'ShipType', 'Country', 'CountryCode', 'Postalcode', 'City'],
+      required: ["OrderNo", "ShipType", "Country", "CountryCode", "Postalcode", "City"],
     },
   },
   {
-    name: 'account_balance',
-    description: 'Query PCBWay account balance, coupon value, and reward points',
+    name: "account_balance",
+    description: "Query PCBWay account balance, coupon value, and reward points",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {},
       required: [],
     },
   },
   {
-    name: 'place_order',
-    description: 'Add a PCB order to cart',
+    name: "place_order",
+    description: "Add a PCB order to cart",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        PcbFileName: { type: 'string', description: 'PCB file name' },
-        BuildDays: { type: 'number', description: 'Production cycle in days (from quote)' },
-        Length: { type: 'number', description: 'Board length in mm' },
-        Width: { type: 'number', description: 'Board width in mm' },
-        Qty: { type: 'number', description: 'Quantity' },
-        Layers: { type: 'number', description: 'Number of layers' },
-        BoardType: { type: 'string', description: 'Board type (default: "Single PCB")' },
-        Material: { type: 'string', description: 'PCB material (default: "FR-4")' },
-        Thickness: { type: 'number', description: 'Board thickness in mm (default: 1.6)' },
-        SolderMask: { type: 'string', description: 'Solder mask color (default: "Green")' },
-        Silkscreen: { type: 'string', description: 'Silkscreen color (default: "White")' },
-        SurfaceFinish: { type: 'string', description: 'Surface finish (default: "HASL with lead")' },
-        PcbFileUrl: { type: 'string', description: 'URL to PCB file (optional)' },
-        Note: { type: 'string', description: 'Order notes (optional)' },
-        BuyerEmail: { type: 'string', description: 'Buyer email for contact (optional)' },
+        PcbFileName: { type: "string", description: "PCB file name" },
+        BuildDays: { type: "number", description: "Production cycle in days (from quote)" },
+        Length: { type: "number", description: "Board length in mm" },
+        Width: { type: "number", description: "Board width in mm" },
+        Qty: { type: "number", description: "Quantity" },
+        Layers: { type: "number", description: "Number of layers" },
+        BoardType: { type: "string", description: 'Board type (default: "Single PCB")' },
+        Material: { type: "string", description: 'PCB material (default: "FR-4")' },
+        Thickness: { type: "number", description: "Board thickness in mm (default: 1.6)" },
+        SolderMask: { type: "string", description: 'Solder mask color (default: "Green")' },
+        Silkscreen: { type: "string", description: 'Silkscreen color (default: "White")' },
+        SurfaceFinish: {
+          type: "string",
+          description: 'Surface finish (default: "HASL with lead")',
+        },
+        PcbFileUrl: { type: "string", description: "URL to PCB file (optional)" },
+        Note: { type: "string", description: "Order notes (optional)" },
+        BuyerEmail: { type: "string", description: "Buyer email for contact (optional)" },
       },
-      required: ['PcbFileName', 'BuildDays', 'Length', 'Width', 'Qty', 'Layers'],
+      required: ["PcbFileName", "BuildDays", "Length", "Width", "Qty", "Layers"],
     },
   },
   {
-    name: 'confirm_order',
-    description: 'Confirm orders and make payment on PCBWay',
+    name: "confirm_order",
+    description: "Confirm orders and make payment on PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        OrderNo: { type: 'string', description: 'Order number(s) — comma-separated for multiple' },
-        PayType: { type: 'number', description: 'Payment method (1=AccountPay, 2=PCBWayWebPay)' },
-        AddGroupNo: { type: 'string', description: 'Order package number when adding to package (optional)' },
-        ShipType: { type: 'number', description: 'Logistics company (required unless adding to package)' },
-        Country: { type: 'string', description: 'Country name (required unless adding to package)' },
-        CountryCode: { type: 'string', description: 'Country code (required unless adding to package)' },
-        State: { type: 'string', description: 'State/Province (optional)' },
-        Postalcode: { type: 'string', description: 'Postal code (optional)' },
-        City: { type: 'string', description: 'City (required unless adding to package)' },
-        Addr: { type: 'string', description: 'Delivery address (required unless adding to package)' },
-        CompanyName: { type: 'string', description: 'Company name (optional)' },
-        ContactName: { type: 'string', description: 'Contact person (optional)' },
-        Tel: { type: 'string', description: 'Phone number (required unless adding to package)' },
-        BuyerEmail: { type: 'string', description: 'Buyer email for contact (optional)' },
-        Tax: { type: 'string', description: 'Tax ID (optional)' },
+        OrderNo: { type: "string", description: "Order number(s) — comma-separated for multiple" },
+        PayType: { type: "number", description: "Payment method (1=AccountPay, 2=PCBWayWebPay)" },
+        AddGroupNo: {
+          type: "string",
+          description: "Order package number when adding to package (optional)",
+        },
+        ShipType: {
+          type: "number",
+          description: "Logistics company (required unless adding to package)",
+        },
+        Country: {
+          type: "string",
+          description: "Country name (required unless adding to package)",
+        },
+        CountryCode: {
+          type: "string",
+          description: "Country code (required unless adding to package)",
+        },
+        State: { type: "string", description: "State/Province (optional)" },
+        Postalcode: { type: "string", description: "Postal code (optional)" },
+        City: { type: "string", description: "City (required unless adding to package)" },
+        Addr: {
+          type: "string",
+          description: "Delivery address (required unless adding to package)",
+        },
+        CompanyName: { type: "string", description: "Company name (optional)" },
+        ContactName: { type: "string", description: "Contact person (optional)" },
+        Tel: { type: "string", description: "Phone number (required unless adding to package)" },
+        BuyerEmail: { type: "string", description: "Buyer email for contact (optional)" },
+        Tax: { type: "string", description: "Tax ID (optional)" },
       },
-      required: ['OrderNo', 'PayType'],
+      required: ["OrderNo", "PayType"],
     },
   },
   {
-    name: 'cancel_order',
-    description: 'Cancel an existing PCBWay order',
+    name: "cancel_order",
+    description: "Cancel an existing PCBWay order",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        OrderNo: { type: 'string', description: 'PCBWay order number to cancel' },
+        OrderNo: { type: "string", description: "PCBWay order number to cancel" },
       },
-      required: ['OrderNo'],
+      required: ["OrderNo"],
     },
   },
   {
-    name: 'check_tgroup_order',
-    description: 'Check awaiting-payment order package details on PCBWay',
+    name: "check_tgroup_order",
+    description: "Check awaiting-payment order package details on PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        TGroupNo: { type: 'string', description: 'Awaiting-payment order package number' },
+        TGroupNo: { type: "string", description: "Awaiting-payment order package number" },
       },
-      required: ['TGroupNo'],
+      required: ["TGroupNo"],
     },
   },
   {
-    name: 'pay_tgroup_order',
-    description: 'Pay for an awaiting-payment order package on PCBWay',
+    name: "pay_tgroup_order",
+    description: "Pay for an awaiting-payment order package on PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        TGroupNo: { type: 'string', description: 'Awaiting-payment order package number' },
-        PayType: { type: 'number', description: 'Payment method (1=AccountPay, 2=PCBWayWebPay)' },
+        TGroupNo: { type: "string", description: "Awaiting-payment order package number" },
+        PayType: { type: "number", description: "Payment method (1=AccountPay, 2=PCBWayWebPay)" },
       },
-      required: ['TGroupNo', 'PayType'],
+      required: ["TGroupNo", "PayType"],
     },
   },
   {
-    name: 'cancel_tgroup_order',
-    description: 'Cancel an awaiting-payment order package on PCBWay',
+    name: "cancel_tgroup_order",
+    description: "Cancel an awaiting-payment order package on PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        TGroupNo: { type: 'string', description: 'Awaiting-payment order package number' },
+        TGroupNo: { type: "string", description: "Awaiting-payment order package number" },
       },
-      required: ['TGroupNo'],
+      required: ["TGroupNo"],
     },
   },
   {
-    name: 'check_group_order',
-    description: 'Check a confirmed order package details on PCBWay',
+    name: "check_group_order",
+    description: "Check a confirmed order package details on PCBWay",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        GroupNo: { type: 'string', description: 'Order package number' },
+        GroupNo: { type: "string", description: "Order package number" },
       },
-      required: ['GroupNo'],
+      required: ["GroupNo"],
     },
   },
   {
-    name: 'get_countries',
-    description: 'List all supported countries for PCBWay ordering',
+    name: "get_countries",
+    description: "List all supported countries for PCBWay ordering",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {},
       required: [],
     },
   },
   {
-    name: 'get_states',
-    description: 'List states/provinces for a country',
+    name: "get_states",
+    description: "List states/provinces for a country",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        Country: { type: 'string', description: 'Country name (e.g. "UNITED STATES OF AMERICA")' },
-        CountryCode: { type: 'string', description: 'Country code (e.g. "US")' },
+        Country: { type: "string", description: 'Country name (e.g. "UNITED STATES OF AMERICA")' },
+        CountryCode: { type: "string", description: 'Country code (e.g. "US")' },
       },
-      required: ['Country', 'CountryCode'],
+      required: ["Country", "CountryCode"],
     },
   },
   {
-    name: 'get_cities',
-    description: 'List cities for a country and state',
+    name: "get_cities",
+    description: "List cities for a country and state",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        Country: { type: 'string', description: 'Country name (e.g. "UNITED STATES OF AMERICA")' },
-        CountryCode: { type: 'string', description: 'Country code (e.g. "US")' },
-        State: { type: 'string', description: 'State/Province to filter by (optional)' },
+        Country: { type: "string", description: 'Country name (e.g. "UNITED STATES OF AMERICA")' },
+        CountryCode: { type: "string", description: 'Country code (e.g. "US")' },
+        State: { type: "string", description: "State/Province to filter by (optional)" },
       },
-      required: ['Country', 'CountryCode'],
+      required: ["Country", "CountryCode"],
     },
   },
 ];
@@ -385,13 +452,13 @@ const tools: Tool[] = [
 
 async function main(): Promise<void> {
   // Handle --help before anything else
-  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+  if (process.argv.includes("--help") || process.argv.includes("-h")) {
     printHelp();
     process.exit(0);
   }
 
   // Load config (will throw with clear message if env vars missing)
-  let config;
+  let config: Config;
   try {
     config = loadConfig();
   } catch (err) {
@@ -419,7 +486,7 @@ async function main(): Promise<void> {
 
   const server = new Server(
     {
-      name: 'pcbway-mcp-server',
+      name: "pcbway-mcp-server",
       version: VERSION,
     },
     {
@@ -438,112 +505,112 @@ async function main(): Promise<void> {
 
     try {
       switch (name) {
-        case 'pcb_quote': {
+        case "pcb_quote": {
           const parsed = PcbQuote.inputSchema.parse(args);
           const text = await pcbQuote.getQuote(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'smt_quote': {
+        case "smt_quote": {
           const parsed = SmtQuote.inputSchema.parse(args);
           const text = await smtQuote.getQuote(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'order_process': {
+        case "order_process": {
           const parsed = OrderProcess.inputSchema.parse(args);
           const text = await orderProcess.getStatus(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'order_details': {
+        case "order_details": {
           const parsed = OrderDetails.inputSchema.parse(args);
           const text = await orderDetails.getDetails(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'shipping_freight': {
+        case "shipping_freight": {
           const parsed = Shipping.inputSchema.parse(args);
           const text = await shipping.getFreight(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'account_balance': {
+        case "account_balance": {
           const parsed = Account.inputSchema.parse(args ?? {});
           const text = await account.getBalance(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'place_order': {
+        case "place_order": {
           const parsed = PlaceOrder.inputSchema.parse(args);
           const text = await placeOrder.place(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'confirm_order': {
+        case "confirm_order": {
           const parsed = ConfirmOrder.inputSchema.parse(args);
           const text = await confirmOrder.confirm(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'cancel_order': {
+        case "cancel_order": {
           const parsed = CancelOrder.inputSchema.parse(args);
           const text = await cancelOrder.cancel(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'check_tgroup_order': {
+        case "check_tgroup_order": {
           const parsed = CheckTGroupOrder.inputSchema.parse(args);
           const text = await checkTGroupOrder.check(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'pay_tgroup_order': {
+        case "pay_tgroup_order": {
           const parsed = PayTGroupOrder.inputSchema.parse(args);
           const text = await payTGroupOrder.pay(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'cancel_tgroup_order': {
+        case "cancel_tgroup_order": {
           const parsed = CancelTGroupOrder.inputSchema.parse(args);
           const text = await cancelTGroupOrder.cancel(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'check_group_order': {
+        case "check_group_order": {
           const parsed = CheckGroupOrder.inputSchema.parse(args);
           const text = await checkGroupOrder.check(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'get_countries': {
+        case "get_countries": {
           const parsed = GetCountries.inputSchema.parse(args ?? {});
           const text = await getCountries.get(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'get_states': {
+        case "get_states": {
           const parsed = GetStates.inputSchema.parse(args);
           const text = await getStates.get(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
-        case 'get_cities': {
+        case "get_cities": {
           const parsed = GetCities.inputSchema.parse(args);
           const text = await getCities.get(parsed);
-          return { content: [{ type: 'text', text }] };
+          return { content: [{ type: "text", text }] };
         }
 
         default:
           return {
-            content: [{ type: 'text', text: `Unknown tool: ${name}` }],
+            content: [{ type: "text", text: `Unknown tool: ${name}` }],
             isError: true,
           };
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: 'text', text: `Error: ${message}` }],
+        content: [{ type: "text", text: `Error: ${message}` }],
         isError: true,
       };
     }
@@ -554,6 +621,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  console.error('Fatal error:', err);
+  console.error("Fatal error:", err);
   process.exit(1);
 });

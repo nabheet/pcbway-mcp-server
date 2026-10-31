@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import type { PcbWayClient } from '../client.js';
-import type { CheckTGroupOrderRequest, CheckTGroupOrderResponse } from '../types.js';
+import { z } from "zod";
+import type { PcbWayClient } from "../client.js";
+import type { CheckTGroupOrderRequest, CheckTGroupOrderResponse } from "../types.js";
 
 export const CheckTGroupOrderInputSchema = z.object({
   TGroupNo: z.string().min(1).describe('Awaiting-payment order package number (e.g. "G1278395")'),
@@ -17,13 +17,13 @@ export class CheckTGroupOrder {
     const body: CheckTGroupOrderRequest = { TGroupNo: params.TGroupNo };
 
     const res = await this.client.request<CheckTGroupOrderResponse>(
-      '/api/Pcb/CheckTGroupOrder',
+      "/api/Pcb/CheckTGroupOrder",
       body as unknown as Record<string, unknown>,
     );
 
     const tgo = res.TGroupOrder;
     const lines: string[] = [
-      '## Awaiting-Payment Order Package\n',
+      "## Awaiting-Payment Order Package\n",
       `**Package No:** ${tgo.TGroupNo}`,
       `**Created:** ${tgo.CreateTime}`,
       `**Total:** $${tgo.TotalMoney.toFixed(2)}`,
@@ -46,10 +46,12 @@ export class CheckTGroupOrder {
     if (orders && orders.length > 0) {
       lines.push(`\n### Orders in Package (${orders.length})`);
       for (const o of orders) {
-        lines.push(`\n- **Order:** ${o.GroupNo} | **Price:** $${o.Price.toFixed(2)} | **Status:** ${o.Status} | **Paid:** ${o.IsPaid}`);
+        lines.push(
+          `\n- **Order:** ${o.GroupNo} | **Price:** $${o.Price.toFixed(2)} | **Status:** ${o.Status} | **Paid:** ${o.IsPaid}`,
+        );
       }
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 }

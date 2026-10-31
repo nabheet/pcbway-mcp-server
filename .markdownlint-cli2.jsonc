@@ -1,0 +1,15 @@
+{
+  // markdownlint-cli2 config — full enforcement, no rule exclusions.
+  // Full rule list: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+  "config": {
+    "default": true,
+    // MD013: line length — ENFORCED at 100 for prose, headings and code (matches biome
+    // lineWidth). Table rows are exempt: a cell cannot be wrapped, so enforcing the limit
+    // there only forces content out of the table into footnotes.
+    "MD013": { "line_length": 100, "tables": false }
+    // MD024: duplicate headings — ENFORCED (changelogs/reference docs must vary)
+    // MD041: first line must be top-level heading — ENFORCED
+    // MD060: table column style — ENFORCED
+  },
+  "globs": ["**/*.md", "!node_modules/**", "!dist/**", "!.git/**"]
+}
