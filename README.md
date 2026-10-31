@@ -346,7 +346,7 @@ Releases are published automatically by CI — no manual npm publish needed.
 
 | Trigger | Channel | Version | Tag | GitHub Release |
 | --- | --- | --- | --- | --- |
-| Merge to `main` (shipping changes only) | `latest` | next patch (registry-derived) | `vX.Y.Z` | ✅ (auto notes) |
+| Merge to `main` (shipping changes only) | `latest` | next patch after `max(newest v* tag, registry latest)` | `vX.Y.Z` | ✅ (auto notes) |
 | Every PR push | `beta` | `<version>-beta.<run_number>` | — | — |
 | Push `v*-beta*` tag | `beta` | from `package.json` | the tag | ✅ (prerelease) |
 | Manual `workflow_dispatch` on CI | `beta` | next `-beta.N` after last published beta | — | — |
@@ -355,9 +355,18 @@ Releases are published automatically by CI — no manual npm publish needed.
   (`npm i pcbway-mcp-server@beta`), so every PR is instantly installable — same-repo,
   non-draft, non-dependabot PRs; re-runs deduped.
 
-- Stable version = last published `latest` + patch, so repeated merges never collide.
+- Stable version = the highest of the newest plain `vX.Y.Z` tag and the registry's `latest`,
+  plus a patch — so repeated merges never collide. Two sources because each covers the
+  other's failure: the registry's CDN read lags a minute or two behind a fresh publish
+  (the tag does not), and a publish can succeed while its tag push fails (the registry
+  records it). Taking the maximum keeps the number monotonic either way, with the cost that
+  a stable tag created by mistake raises the baseline permanently — npm never lets a
+  version be reused.
 - An intentional minor/major bump in `package.json` is published as-is (honored).
-- Publish is retried 3x for transient failures only; a version conflict is never retried.
+- Transient publish failures are retried (up to 5 attempts, 3s apart). A version conflict is
+  not retried as-is: on `latest` CI bumps a patch and republishes (bounded at two bumps),
+  because a conflict means the registry is ahead of the baseline it computed. The tag and
+  GitHub release follow the published version, not the initially derived one.
 - A push to `main` only tags/releases if it actually published (channel check).
 - A push to `main` only publishes when it changed something the package ships.
   `package-lock.json`, `.github/**`, and a `package.json` whose only diffs are the version
