@@ -1,4 +1,4 @@
-import { loadConfig, type Config } from './config.js';
+import { type Config, loadConfig } from "./config.js";
 
 // ── Typed error ──────────────────────────────────────────────────
 
@@ -12,7 +12,7 @@ export class PcbWayApiError extends Error {
     public readonly code: number,
   ) {
     super(message);
-    this.name = 'PcbWayApiError';
+    this.name = "PcbWayApiError";
   }
 }
 
@@ -25,15 +25,14 @@ export class PcbWayNetworkError extends Error {
     public readonly status?: number,
   ) {
     super(message);
-    this.name = 'PcbWayNetworkError';
+    this.name = "PcbWayNetworkError";
   }
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
 
 /** Sleep for `ms` milliseconds. */
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Calculate delay with jitter for retry `attempt` (0-indexed). */
 function backoffDelay(baseDelayMs: number, attempt: number): number {
@@ -81,10 +80,10 @@ export class PcbWayClient {
         let response: Response;
         try {
           response = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'api-key': this.config.apiKey,
+              "Content-Type": "application/json",
+              "api-key": this.config.apiKey,
             },
             body: JSON.stringify(body),
             signal: controller.signal,
@@ -105,7 +104,7 @@ export class PcbWayClient {
           }
 
           throw new PcbWayNetworkError(
-            `HTTP ${response.status} ${response.statusText}${text ? ` — ${text}` : ''}`,
+            `HTTP ${response.status} ${response.statusText}${text ? ` — ${text}` : ""}`,
             response.status,
           );
         }
@@ -116,10 +115,10 @@ export class PcbWayClient {
         // Check API-level error status if the response type has it
         // We do a safe check on the envelope fields
         const envelope = data as Record<string, unknown>;
-        if (envelope.Status === 'error') {
-          const errText = typeof envelope.ErrorText === 'string' ? envelope.ErrorText : null;
-          const code = typeof envelope.Code === 'number' ? envelope.Code : 0;
-          throw new PcbWayApiError(errText ?? 'Unknown API error', code);
+        if (envelope.Status === "error") {
+          const errText = typeof envelope.ErrorText === "string" ? envelope.ErrorText : null;
+          const code = typeof envelope.Code === "number" ? envelope.Code : 0;
+          throw new PcbWayApiError(errText ?? "Unknown API error", code);
         }
 
         return data;
@@ -130,17 +129,17 @@ export class PcbWayClient {
         }
 
         // AbortError (timeout) — retry
-        if (err instanceof Error && err.name === 'AbortError') {
+        if (err instanceof Error && err.name === "AbortError") {
           if (attempt < this.config.maxRetries) {
             const delay = backoffDelay(this.config.baseDelayMs, attempt);
             await sleep(delay);
             continue;
           }
-          throw new PcbWayNetworkError('Request timed out');
+          throw new PcbWayNetworkError("Request timed out");
         }
 
         // Fetch network error — retry
-        if (err instanceof TypeError || (err instanceof Error && 'code' in err)) {
+        if (err instanceof TypeError || (err instanceof Error && "code" in err)) {
           lastError = err as Error;
           if (attempt < this.config.maxRetries) {
             const delay = backoffDelay(this.config.baseDelayMs, attempt);
@@ -158,6 +157,6 @@ export class PcbWayClient {
     }
 
     // Should not reach here, but satisfy types
-    throw lastError ?? new PcbWayNetworkError('Request failed');
+    throw lastError ?? new PcbWayNetworkError("Request failed");
   }
 }

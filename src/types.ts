@@ -129,7 +129,7 @@ export interface PcbQuotationRequest {
 export interface PcbQuotationResponse {
   priceList: PcbDataPriceItem[];
   Shipping: ShippingModel;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -154,7 +154,7 @@ export interface SmtQuotationRequest {
 export interface SmtQuotationResponse {
   priceList: PcbDataPriceItem[];
   Shipping: ShippingModel;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -168,7 +168,7 @@ export interface QueryOrderProcessRequest {
 export interface QueryOrderProcessResponse {
   AllProcess: string[];
   List: PcbOrderProcessModel[];
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -282,7 +282,7 @@ export interface PcbModelComplex {
 
 export interface CheckOrderDetailsResponse {
   PcbModel: PcbModelComplex;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -304,7 +304,7 @@ export interface GetFreightByOrderResponse {
   Days: string;
   Price: number;
   IsRas: boolean;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -414,7 +414,7 @@ export interface PlaceOrderResponse {
   OrderNo: string;
   DeliveryDate: string;
   Price: number;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -447,7 +447,7 @@ export interface ConfirmOrderResponse {
   AccountBalance: number;
   PayType: number;
   PCBWayPayUrl: string | null;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -460,7 +460,7 @@ export interface CancelOrderRequest {
 
 export interface CancelOrderResponse {
   OrderNo: string;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -471,7 +471,7 @@ export interface QueryBalanceResponse {
   balance: number;
   coupon: number;
   point: number;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -504,7 +504,7 @@ export interface TGroupOrderModel {
 export interface CheckTGroupOrderResponse {
   TGroupOrder: TGroupOrderModel;
   OrderList: PcbModelComplex[];
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -524,7 +524,7 @@ export interface PayTGroupOrderResponse {
   AccountBalance: number;
   PayType: number;
   PCBWayPayUrl: string | null;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -537,7 +537,7 @@ export interface CancelTGroupOrderRequest {
 
 export interface CancelTGroupOrderResponse {
   TGroupNo: string;
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -569,7 +569,7 @@ export interface GroupOrderModel {
 export interface CheckGroupOrderResponse {
   GroupOrder: GroupOrderModel;
   OrderList: PcbModelComplex[];
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -583,7 +583,7 @@ export interface AddressCountryModel {
 
 export interface GetCountryResponse {
   Countrys: AddressCountryModel[];
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -597,7 +597,7 @@ export interface GetStateRequest {
 
 export interface GetStateResponse {
   States: string[];
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
@@ -617,7 +617,7 @@ export interface AddressCityModel {
 
 export interface GetCityResponse {
   Citys: AddressCityModel[];
-  Status: 'ok' | 'error';
+  Status: "ok" | "error";
   ErrorText: string | null;
   Code: number;
 }
